@@ -56,7 +56,7 @@ class PostCommentsActivity : AppCompatActivity() {
 
 
 
-
+        getImage()
         readComments(postid!!)
         getPostImage(postid!!)
 
@@ -88,9 +88,24 @@ class PostCommentsActivity : AppCompatActivity() {
         Toast.makeText(this, "posted!!", Toast.LENGTH_LONG).show()
     }
 
+    private fun getImage() {
+        val ref : DatabaseReference = FirebaseDatabase.getInstance().reference.child("Users").child(firebaseUser!!.uid)
 
+        ref.addValueEventListener(object: ValueEventListener {
+            override fun onCancelled(error: DatabaseError) {
 
+            }
 
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if(snapshot.exists())
+                {
+                    val user = snapshot.getValue<User>(User::class.java)
+
+                    Picasso.get().load(user!!.getImage()).placeholder(com.example.instagram.R.drawable.profile).into(binding.userProfileImage)
+                }
+            }
+        })
+    }
 
     private fun pushNotification(postid: String) {
 
